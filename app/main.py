@@ -1,22 +1,37 @@
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
+
+from app.api.tasks import router as tasks_router
+from app.database import init_db
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
 
 app = FastAPI(
     title="TaskFlow Engineering API",
-    description="Demo API for engineering knowledge graph ingestion",
-    version="0.1.0",
+    description="Task management API for the engineering knowledge graph demo",
+    version="0.2.0",
+    lifespan=lifespan,
 )
 
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
+app.include_router(tasks_router)
 
 
-@app.get("/")
+@app.get("/", tags=["Health"])
 def root():
     return {
         "service": "TaskFlow Engineering API",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "docs": "/docs",
     }
+
+
+@app.get("/health", tags=["Health"])
+def health_check():
+    return {"status": "ok"}
