@@ -1,6 +1,7 @@
 
 from typing import Optional
-
+from fastapi import Depends
+from app.api.auth import verify_api_key
 from fastapi import APIRouter, HTTPException, Query, Response, status
 
 from app.models.task import (
@@ -12,7 +13,11 @@ from app.models.task import (
 )
 from app.services import task_service
 
-router = APIRouter(prefix="/tasks", tags=["Tasks"])
+router = APIRouter(
+    prefix="/tasks",
+    tags=["tasks"],
+    dependencies=[Depends(verify_api_key)],
+)
 
 
 @router.post(
