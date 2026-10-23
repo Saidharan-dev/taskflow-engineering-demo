@@ -53,3 +53,10 @@ def init_db() -> None:
             )
             """
         )
+
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_tasks_status_priority_id
+            ON tasks (status, priority, id DESC)
+            """
+        )
